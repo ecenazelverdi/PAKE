@@ -73,7 +73,7 @@ def scalar_reduce(data: bytes) -> bytes:
     Libsodium provides crypto_core_ristretto255_scalar_reduce to fix this. It takes a larger number (e.g. 40 or 64 bytes) 
     and mathematically calculates (number) modulo p, guaranteeing the result is a perfectly valid 32-byte scalar.
     """
-"""
+# For Authentication    
 def point_add(p1: bytes, p2: bytes) -> bytes:
     # Ristretto255 point addition: p1 + p2.
     result = (ctypes.c_ubyte * POINT_BYTES)()
@@ -93,4 +93,3 @@ def point_sub(p1: bytes, p2: bytes) -> bytes:
     if ret != 0:
         raise RuntimeError("point_sub failed")
     return bytes(result)
-"""
