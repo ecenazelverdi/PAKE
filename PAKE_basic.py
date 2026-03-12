@@ -22,11 +22,24 @@ def base_mult(scalar_bytes):
     sodium.crypto_scalarmult_ristretto255_base(point, scalar)
     return bytes(point)
 
+def is_valid_point(point_bytes: bytes) -> bool:
+    """Checks if the given bytes represent a valid Ristretto255 group element."""
+    point = (ctypes.c_ubyte * POINT_BYTES).from_buffer_copy(point_bytes)
+    return sodium.crypto_core_ristretto255_is_valid_point(point) == 1
+    """
+     "Ristretto255" group is that it was specifically designed to make these subgroup attacks 
+     impossible at the mathematical layer. Unlike older curves where you had to manually trace 
+     the subgroup size, the Ristretto encoding only allows points that belong to the large prime-order 
+     subgroup to decode successfully.
+    """
+
 def scalarmult(scalar_bytes, point_bytes):
     result = (ctypes.c_ubyte * POINT_BYTES)()
     scalar = (ctypes.c_ubyte * SCALAR_BYTES).from_buffer_copy(scalar_bytes)
     point = (ctypes.c_ubyte * POINT_BYTES).from_buffer_copy(point_bytes)
-    sodium.crypto_scalarmult_ristretto255(result, scalar, point)
+    ret = sodium.crypto_scalarmult_ristretto255(result, scalar, point)
+    if ret != 0:
+        raise ValueError("scalarmult failed: invalid group element")
     return bytes(result)
 
 def hash_to_scalar(password: bytes):

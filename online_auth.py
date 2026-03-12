@@ -133,7 +133,10 @@ class Prover:
         """
         # Note: libsodium's scalarmult fails safely if shareV is not a valid group element
 
-        # Z = x * (shareV - w0*N)
+        # RFC Formula: Z = h * x * (Y - w0*N)
+        # Because we are using the Ristretto255 curve, the cofactor `h` is strictly 1.
+        # This prevents Small Subgroup attacks by design, allowing us to omit multiplying by h.
+        # Z = 1 * x * (shareV - w0*N)
         w0N = pb.scalarmult(self.w0, reg.N)
         Y_minus_w0N = pb.point_sub(shareV, w0N)
         Z = pb.scalarmult(self.x, Y_minus_w0N)
@@ -178,6 +181,9 @@ class Verifier:
         Round 1: Receive shareP (X), compute shareV (Y), compute Z, V, and Keys.
         Returns (shareV, confirmV).
         """
+        if not pb.is_valid_point(shareP):
+            raise ValueError("shareP is not a valid Ristretto255 group element!")
+
         y = pb.random_scalar()
 
         # Y = y*P + w0*N
@@ -185,7 +191,10 @@ class Verifier:
         w0N = pb.scalarmult(self.w0, reg.N)
         self.shareV = pb.point_add(yP, w0N)
 
-        # Z = y * (shareP - w0*M)
+        # RFC Formula: Z = h * y * (X - w0*M)
+        # Because we are using the Ristretto255 curve, the cofactor `h` is strictly 1.
+        # This allows us to mathematically omit multiplying by h here.
+        # Z = 1 * y * (shareP - w0*M)
         w0M = pb.scalarmult(self.w0, reg.M)
         X_minus_w0M = pb.point_sub(shareP, w0M)
         Z = pb.scalarmult(y, X_minus_w0M)
