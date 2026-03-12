@@ -168,3 +168,36 @@ def register(password: str,
         "M":    M,
         "N":    N,
     }
+
+#Server implementation for multiple users
+class ServerDB:
+
+    def __init__(self):
+        self.users = {}
+
+    def register_user(self, uname: bytes, pword: str, id_verifier: bytes):
+        """
+        Registrationg and stores the info
+        """
+        rec = register(pword, uname, id_verifier)
+
+        # Server stores only w0, L, and salt
+        self.users[uname] = {
+            "w0": rec["w0"],
+            "L": rec["L"],
+            "salt": rec["salt"]
+        }
+
+        return rec  # Returns this so client can keep w0, w1
+
+    def get_user(self, uname: bytes):
+        """
+        Retrieve stored server record.
+        """
+        if uname not in self.users:
+            raise ValueError("Unknown user")
+
+        return self.users[uname]
+
+    def list_users(self):
+        return list(self.users.keys())
