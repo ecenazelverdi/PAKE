@@ -9,6 +9,8 @@ sudo apt-get install libsodium-dev
 - `tests/`: Unit and integration tests.
 - `server.py`: PAKE Server entry point.
 - `client.py`: PAKE Client entry point.
+- `tls_server.py`: TLS Server entry point.
+- `tls_client.py`: TLS Client entry point.
 
 ## How to Run
 
@@ -37,6 +39,22 @@ python3 client.py login <username> <password>
 Example:
 ```bash
 python3 client.py login charlie new_password
+```
+### 3. Running the TLS tests
+Before running the files, generate the certificate using OpenSSL.
+
+#### Certificate generation:
+```bash
+openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes
+```
+In one terminal, run the server
+```bash
+python3 tls_server.py
+```
+
+In another, run the client
+```bash
+python3 tls_client.py
 ```
 
 ### Running Tests
