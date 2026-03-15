@@ -56,6 +56,14 @@ In another, run the client
 ```bash
 python3 tls_client.py
 ```
+To add delay using Linux's Traffic Control(tc) use:
+```bash
+sudo tc qdisc add dev lo root netem delay <duration>
+```
+To remove the delay
+```bash
+sudo tc qdisc del dev lo root
+```
 
 ### Running Tests
 To run all tests at once, simply run:
