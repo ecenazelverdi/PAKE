@@ -1,6 +1,6 @@
 import os
-import registration as r
-import online_auth as auth
+from pake import registration as r
+from pake import online_auth as auth
 
 def test_success_case():
     print("--- 1) Success Case: Classic SPAKE2+ Exchange ---")

@@ -1,5 +1,5 @@
-import registration_mul as r
-import online_auth as auth
+from pake import online_auth as auth
+from pake import registration as r
 
 def test_online_auth():
 

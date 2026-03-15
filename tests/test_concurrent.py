@@ -11,9 +11,9 @@ import socket
 import threading
 import time
 from datetime import datetime
-import registration as r
-import online_auth as auth
-from config import HOST, PORT, send_msg, recv_msg
+from pake import registration as r
+from pake import online_auth as auth
+from pake.config import HOST, PORT, send_msg, recv_msg
 
 def timestamp():
     return datetime.now().strftime('%H:%M:%S.%f')[:-3]

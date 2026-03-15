@@ -1,7 +1,7 @@
 import socket
-import registration as r
-import online_auth as auth
-from config import HOST, PORT, send_msg, recv_msg
+from pake import registration as r
+from pake import online_auth as auth
+from pake.config import HOST, PORT, send_msg, recv_msg
 import threading #For async purposes
 import time
 from datetime import datetime

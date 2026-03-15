@@ -1,4 +1,4 @@
-import ristretto as R
+from pake import PAKE_basic as R
 
 x = R.random_scalar()
 X = R.base_mult(x)

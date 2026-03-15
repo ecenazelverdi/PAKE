@@ -13,7 +13,7 @@ What each party keeps after registration:
 
 import ctypes
 import os
-import PAKE_basic as pb
+from . import PAKE_basic as pb
 
 # ---------------------------------------------------------------------------
 # Argon2id parameters (libsodium defaults for interactive use)

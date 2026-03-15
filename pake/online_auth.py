@@ -9,8 +9,8 @@ Dependencies:
 - registration.py (for constants M and N)
 """
 
-import PAKE_basic as pb
-import registration as reg
+from . import PAKE_basic as pb
+from . import registration as reg
 import hashlib
 
 # ---------------------------------------------------------------------------

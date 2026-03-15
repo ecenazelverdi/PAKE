@@ -1,4 +1,4 @@
-import registration as r
+from pake import registration as r
 
 def test_registration():
     print("Running registration tests...")

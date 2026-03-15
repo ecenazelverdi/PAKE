@@ -1,5 +1,5 @@
-import registration as r
-import online_auth as auth
+from pake import registration as r
+from pake import online_auth as auth
 
 def test_online_auth():
     print("Running Online Authentication (SPAKE2+) tests...\n")
