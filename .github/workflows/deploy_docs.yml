@@ -3,6 +3,10 @@ on:
     branches:
       - main
       - bugfix/turn256To512
+
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
