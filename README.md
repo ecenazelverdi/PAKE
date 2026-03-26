@@ -1,4 +1,6 @@
-# How to Install
+# PAKE Implementation
+
+[![Documentation](https://img.shields.io/badge/docs-live-brightgreen)](https://ecenazelverdi.github.io/PAKE/)
 
 This project requires `libsodium` to be installed on your system.
 
@@ -79,3 +81,18 @@ You can also run individual tests:
 python3 tests/test_registration.py
 python3 tests/test_full_spake2.py
 ```
+
+## Documentation
+
+To view the project's documentation locally with the **Material** theme:
+
+### Build the documentation:
+```bash
+conda run -n pake mkdocs build
+```
+
+### Serve the documentation locally:
+```bash
+conda run -n pake mkdocs serve
+```
+Once running, you can access it at [http://127.0.0.1:8000](http://127.0.0.1:8000).
