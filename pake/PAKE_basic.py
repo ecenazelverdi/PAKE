@@ -43,14 +43,14 @@ def scalarmult(scalar_bytes, point_bytes):
     return bytes(result)
 
 def hash_to_scalar(password: bytes):
-    h = hashlib.sha256(password).digest()
+    h = hashlib.sha512(password).digest()
     scalar = (ctypes.c_ubyte * SCALAR_BYTES)()
     sodium.crypto_core_ristretto255_scalar_reduce(scalar, h)
     return bytes(scalar)
 
 """
 def hash_point(point_bytes):
-    return hashlib.sha256(point_bytes).digest()
+    return hashlib.sha512(point_bytes).digest()
 """
 #---------------------------
 

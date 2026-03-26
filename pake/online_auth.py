@@ -18,20 +18,20 @@ import hashlib
 # ---------------------------------------------------------------------------
 
 def _hkdf_extract(salt: bytes, ikm: bytes) -> bytes:
-    """HKDF-Extract using HMAC-SHA256."""
+    """HKDF-Extract using HMAC-sha512."""
     import hmac
     if len(salt) == 0:
-        salt = b'\x00' * 32  # SHA256 block size
-    return hmac.new(salt, ikm, hashlib.sha256).digest()
+        salt = b'\x00' * 64  # HMAC-SHA512 output length (64 bytes)
+    return hmac.new(salt, ikm, hashlib.sha512).digest()
 
 def _hkdf_expand(prk: bytes, info: bytes, length: int) -> bytes:
-    """HKDF-Expand using HMAC-SHA256."""
+    """HKDF-Expand using HMAC-sha512."""
     import hmac
     t = b""
     okm = b""
     i = 1
     while len(okm) < length:
-        t = hmac.new(prk, t + info + bytes([i]), hashlib.sha256).digest()
+        t = hmac.new(prk, t + info + bytes([i]), hashlib.sha512).digest()
         okm += t
         i += 1
     return okm[:length]
@@ -72,10 +72,10 @@ def compute_key_schedule(TT: bytes) -> dict:
     Returns a dictionary of keys.
     """
     # K_main = Hash(TT)
-    k_main = hashlib.sha256(TT).digest()
+    k_main = hashlib.sha512(TT).digest()
 
     # K_confirmP || K_confirmV = KDF(nil, K_main, "ConfirmationKeys")
-    # Using HKDF with empty salt. We need 64 bytes total (32 for each HMAC-SHA256 key)
+    # Using HKDF with empty salt. We need 64 bytes total (32 for each HMAC-sha512 key)
     prk = _hkdf_extract(b"", k_main)
     confirm_keys = _hkdf_expand(prk, b"ConfirmationKeys", 64)
     k_confirmP = confirm_keys[:32]
@@ -91,9 +91,9 @@ def compute_key_schedule(TT: bytes) -> dict:
     }
 
 def compute_mac(key: bytes, message: bytes) -> bytes:
-    """Computes HMAC-SHA256 for key confirmation."""
+    """Computes HMAC-sha512 for key confirmation."""
     import hmac
-    return hmac.new(key, message, hashlib.sha256).digest()
+    return hmac.new(key, message, hashlib.sha512).digest()
 
 
 # ---------------------------------------------------------------------------

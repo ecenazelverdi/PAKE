@@ -1,4 +1,7 @@
-After running `pip install -r requirements.txt`, if you get an error, try to run the given code:
+# How to Install
+
+This project requires `libsodium` to be installed on your system.
+
 ```bash
 sudo apt-get install libsodium-dev
 ```

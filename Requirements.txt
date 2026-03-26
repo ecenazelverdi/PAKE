@@ -1,9 +1,7 @@
 Requirements:
 
-Python >= 3.12.3
-PyNaCl >= 1.6.2
-pycparser == 3.0
-cffi == 2.0.0
+Python >= 3.11.0
 
-If wheel fails to build for PyNaCl "ERROR: Could not build wheels for pynacl, which is required to install pyproject.toml-based projects"
-> Try `pip install pynacl --only-binary :all:` 
+# Note: This project requires libsodium to be installed on the system.
+# Linux: sudo apt-get install libsodium-dev
+# macOS: brew install libsodium
