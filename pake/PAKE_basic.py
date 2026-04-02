@@ -26,12 +26,6 @@ def is_valid_point(point_bytes: bytes) -> bool:
     """Checks if the given bytes represent a valid Ristretto255 group element."""
     point = (ctypes.c_ubyte * POINT_BYTES).from_buffer_copy(point_bytes)
     return sodium.crypto_core_ristretto255_is_valid_point(point) == 1
-    """
-     "Ristretto255" group is that it was specifically designed to make these subgroup attacks 
-     impossible at the mathematical layer. Unlike older curves where you had to manually trace 
-     the subgroup size, the Ristretto encoding only allows points that belong to the large prime-order 
-     subgroup to decode successfully.
-    """
 
 def scalarmult(scalar_bytes, point_bytes):
     result = (ctypes.c_ubyte * POINT_BYTES)()
@@ -48,16 +42,9 @@ def hash_to_scalar(password: bytes):
     sodium.crypto_core_ristretto255_scalar_reduce(scalar, h)
     return bytes(scalar)
 
-"""
-def hash_point(point_bytes):
-    return hashlib.sha512(point_bytes).digest()
-"""
 #---------------------------
 
 def hash_to_point(label: bytes) -> bytes:
-    """Map an arbitrary label to a Ristretto255 point with unknown discrete log.
-    Uses SHA-512 to produce 64 bytes, then crypto_core_ristretto255_from_hash.
-    """
     h = hashlib.sha512(label).digest()  # 64 bytes required by libsodium
     point = (ctypes.c_ubyte * POINT_BYTES)()
     hash_buf = (ctypes.c_ubyte * 64).from_buffer_copy(h)
@@ -68,24 +55,12 @@ def hash_to_point(label: bytes) -> bytes:
 
 
 def scalar_reduce(data: bytes) -> bytes:
-    """Reduce arbitrary bytes to a valid Ristretto255 scalar (mod p).
-    Input must be at least 64 bytes for uniform reduction; if shorter,
-    it is zero-padded to 64 bytes.
-    """
     padded = data.ljust(64, b'\x00')[:64]
     scalar = (ctypes.c_ubyte * SCALAR_BYTES)()
     buf = (ctypes.c_ubyte * 64).from_buffer_copy(padded)
     sodium.crypto_core_ristretto255_scalar_reduce(scalar, buf)
     return bytes(scalar)
-    """
-    In elliptic curve cryptography, a point is a coordinate on the curve, but a scalar is an integer used to 
-    multiply that point (e.g., $X = x \cdot P$). For Ristretto255, a valid scalar must be an integer between $0$ 
-    and $p-1$ (where $p$ is the order of the group, which is roughly $2^{252}$). When we use Argon2id to derive 
-    80 bytes for the password, we get completely random bits. If we just take 32 bytes of random bits, the resulting 
-    integer might be larger than $p$. If we try to use an invalid, oversized scalar, the cryptographic math will fail.
-    Libsodium provides crypto_core_ristretto255_scalar_reduce to fix this. It takes a larger number (e.g. 40 or 64 bytes) 
-    and mathematically calculates (number) modulo p, guaranteeing the result is a perfectly valid 32-byte scalar.
-    """
+
 # For Authentication    
 def point_add(p1: bytes, p2: bytes) -> bytes:
     # Ristretto255 point addition: p1 + p2.

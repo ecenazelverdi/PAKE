@@ -1,12 +1,3 @@
-"""
-Test to prove that the server handles multiple clients concurrently.
-
-A "slow" client deliberately sleeps for 3 seconds in the middle of its handshake.
-A "fast" client connects AFTER the slow client and completes its handshake immediately.
-
-If the server is truly non-blocking (threaded), the fast client will finish
-BEFORE the slow client, proving that one user doesn't block another.
-"""
 import socket
 import threading
 import time

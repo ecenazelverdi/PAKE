@@ -2,7 +2,7 @@ import socket
 from pake import registration as r
 from pake import online_auth as auth
 from pake.config import HOST, PORT, send_msg, recv_msg
-import threading #For async purposes
+import threading
 import time
 from datetime import datetime
 
@@ -12,7 +12,6 @@ db.register_user(b"alice", "password123", b"server")
 db.register_user(b"bob", "hunter2", b"server")
 
 def start_server():
-    #python3 server.py & sleep 1; kill %1
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         # 1. Bind the socket to the IP and Port
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -87,12 +86,9 @@ def handle_client(conn, addr):
             # Verify Prover's confirmation
             k_shared = verifier.verify_confirmation(confirmP)
             """
-            ANSI Escape Code. It is a special secret command you can put inside a string that tells your MacOS/Linux terminal screen to change the color of the text.
-
-            \033[ is the signal to the terminal: "Hey, stop printing text for a second, I have a color command for you!"
-            92m is the specific code for Bright Green.
-            91m is the specific code for Bright Red.
-            0m is the code for Reset (go back to normal white/gray text).
+            92m ~ Bright Green.
+            91m ~ Bright Red.
+            0m ~ Reset (go back to normal white/gray text).
             """
             
             t_end = time.time()

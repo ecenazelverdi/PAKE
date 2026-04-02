@@ -1,14 +1,3 @@
-"""
-online_auth.py — SPAKE2+ Online Authentication (RFC 9383, Section 3.3 and 3.4)
-
-Implements the 2-round protocol where the Prover and Verifier establish
-a shared transcript and derive symmetric keys.
-
-Dependencies:
-- PAKE_basic.py (for Ristretto group operations)
-- registration.py (for constants M and N)
-"""
-
 from . import PAKE_basic as pb
 from . import registration as reg
 import hashlib
@@ -49,10 +38,6 @@ def compute_transcript(context: bytes,
                        Z: bytes,
                        V: bytes,
                        w0: bytes) -> bytes:
-    """
-    Computes the protocol transcript TT per RFC 9383 Sec 3.3.
-    TT = len(Context) || Context || len(idProver) || idProver ...
-    """
     return (
         reg._encode_with_length(context) +
         reg._encode_with_length(id_prover) +
@@ -67,10 +52,6 @@ def compute_transcript(context: bytes,
     )
 
 def compute_key_schedule(TT: bytes) -> dict:
-    """
-    Computes K_main, K_confirmP, K_confirmV, and K_shared per RFC 9383 Sec 3.4.
-    Returns a dictionary of keys.
-    """
     # K_main = Hash(TT)
     k_main = hashlib.sha512(TT).digest()
 
@@ -116,7 +97,6 @@ class Prover:
         self.keys = None
 
     def create_message(self) -> bytes:
-        """Round 1: Generate x, compute shareP = x*P + w0*M"""
         self.x = pb.random_scalar()
         
         # X = x*P + w0*M
@@ -127,16 +107,7 @@ class Prover:
         return self.shareP
 
     def process_message(self, shareV: bytes) -> bytes:
-        """
-        Round 2: Receive shareV, compute Z, V, Transcript, Keys.
-        Returns the Prover's confirmation mac (confirmP).
-        """
         # Note: libsodium's scalarmult fails safely if shareV is not a valid group element
-
-        # RFC Formula: Z = h * x * (Y - w0*N)
-        # Because we are using the Ristretto255 curve, the cofactor `h` is strictly 1.
-        # This prevents Small Subgroup attacks by design, allowing us to omit multiplying by h.
-        # Z = 1 * x * (shareV - w0*N)
         w0N = pb.scalarmult(self.w0, reg.N)
         Y_minus_w0N = pb.point_sub(shareV, w0N)
         Z = pb.scalarmult(self.x, Y_minus_w0N)
@@ -177,29 +148,19 @@ class Verifier:
         self.keys = None
 
     def process_message(self, shareP: bytes) -> tuple[bytes, bytes]:
-        """
-        Round 1: Receive shareP (X), compute shareV (Y), compute Z, V, and Keys.
-        Returns (shareV, confirmV).
-        """
         if not pb.is_valid_point(shareP):
             raise ValueError("shareP is not a valid Ristretto255 group element!")
 
         y = pb.random_scalar()
 
-        # Y = y*P + w0*N
         yP = pb.base_mult(y)
         w0N = pb.scalarmult(self.w0, reg.N)
         self.shareV = pb.point_add(yP, w0N)
 
-        # RFC Formula: Z = h * y * (X - w0*M)
-        # Because we are using the Ristretto255 curve, the cofactor `h` is strictly 1.
-        # This allows us to mathematically omit multiplying by h here.
-        # Z = 1 * y * (shareP - w0*M)
         w0M = pb.scalarmult(self.w0, reg.M)
         X_minus_w0M = pb.point_sub(shareP, w0M)
         Z = pb.scalarmult(y, X_minus_w0M)
 
-        # V = y * L
         V = pb.scalarmult(y, self.L)
 
         # Compute Transcript and Keys

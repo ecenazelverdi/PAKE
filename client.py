@@ -29,7 +29,7 @@ def run_client(username: str, password: str):
         client_reg = r.register(password, uname_bytes, b"server", salt=salt)
         t_argon_end = time.time()
 
-        #==========Step 3: Round 1 — Send your first message==========
+        #========== Round 1 — Send your first message==========
         # 4. Create Prover and compute shareP
         t_r1_start = time.time()
         prover = auth.Prover(b"SPAKE2+-Loopback", uname_bytes, b"server", client_reg["w0"], client_reg["w1"])
@@ -40,7 +40,7 @@ def run_client(username: str, password: str):
         send_msg(s, shareP)
         print("[Client] Sent shareP to server.")
 
-        #==========Step 4: Round 2 — Receive server's response and verify==========
+        #========== Round 2 — Receive server's response and verify==========
         # 5. Receive shareV and confirmV from server
         shareV = recv_msg(s)
         confirmV = recv_msg(s)
@@ -56,7 +56,7 @@ def run_client(username: str, password: str):
             return None
         t_r2_end = time.time()
         
-        #==========Step 5: Send your MAC and get result==========
+        #========== Send your MAC and get result==========
         t_net_3_start = time.time()
         # 8. Send our confirmP to server
         send_msg(s, confirmP)

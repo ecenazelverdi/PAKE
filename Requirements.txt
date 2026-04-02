@@ -1,7 +1,0 @@
-Requirements:
-
-Python >= 3.11.0
-
-# Note: This project requires libsodium to be installed on the system.
-# Linux: sudo apt-get install libsodium-dev
-# macOS: brew install libsodium
