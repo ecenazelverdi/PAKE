@@ -87,7 +87,3 @@ You can run the benchmark by running the following command:
 ```bash
 python3 benchmark.py
 ```
-
-## Documentation
-
-To view the project's documentation locally with the **Material** theme:
